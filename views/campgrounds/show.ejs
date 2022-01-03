@@ -10,14 +10,20 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item"><%= camp.location %></li>
+                <li class="list-group-item"> Submitted by
+                    <b> <%= camp.author.username %> </b> |
+                    <a href="mailto:<%= camp.author.email %>">Send Email</a>
+                </li>
                 <li class="list-group-item">$<%= camp.price %>/night</li>
             </ul>
+            <% if(currentUser && camp.author.equals(currentUser._id)) { %>
             <div class="card-body">
                 <a class="card-link btn btn-primary" href="/campgrounds/<%= camp._id %>/edit">Edit</a>
                 <form class="d-inline" action="/campgrounds/<%= camp._id %>?_method=DELETE" method="POST">
                     <button class="btn btn-danger" type="submit">Delete</button>
                 </form>
             </div>
+            <% } %>
             <div class="card-footer text-muted">
                 2 days ago
             </div>
@@ -25,6 +31,7 @@
     </div>
 
     <div class="col-6">
+        <% if(currentUser){ %>
         <h2>Leave a Review</h2>
         <form action="/campgrounds/<%= camp._id %>/reviews" method="POST" class="mb-3 needs-validation" novalidate>
             <div class="mb-3">
@@ -38,15 +45,18 @@
             </div>
             <button class="btn btn-success">Submit</button>
         </form>
-
+        <% } %>
         <% for(let review of camp.reviews) { %>
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">Rating: <%= review.rating %></h5>
-                <div class="card-text">Review: <%= review.body %></div>
+                <h6 class="card-subtitle mb-2 text-muted">By <%= review.author.username %></h6>
+                <p class="card-text">Review: <%= review.body %></p>
+                <% if(currentUser && review.author.equals(currentUser._id)) { %>
                 <form action="/campgrounds/<%= camp._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
-                    <button type="submit" class="btn btn-sm btn-danger mt-3">Delete</button>
+                    <button type="submit" class="btn btn-sm btn-danger mt-1">Delete</button>
                 </form>
+                <% } %>
             </div>
         </div>
         <% } %>
