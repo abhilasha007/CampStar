@@ -9,6 +9,7 @@
   "author": "abhilasha saini",
   "license": "ISC",
   "dependencies": {
+    "@mapbox/mapbox-sdk": "^0.13.2",
     "cloudinary": "^1.28.0",
     "connect-flash": "^0.1.1",
     "dotenv": "^10.0.0",
