@@ -18,4 +18,3 @@
             }, false)
         })
 })()
-console.log('msg from public dir');
