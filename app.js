@@ -13,6 +13,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize');
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/campstar';
+const MongoDBStore = require("connect-mongo")
 
 const app = express();
 
@@ -20,7 +22,7 @@ const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 
-mongoose.connect('mongodb://localhost:27017/campstar', {
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -40,9 +42,18 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(mongoSanitize({allowDots: true, replaceWith: '_'}));
 
+const secret = process.env.SECRET || 'secret101';
+
+const store = MongoDBStore.create({
+    mongoUrl: dbUrl,
+    secret,
+    touchAfter: 24*60*60
+})
+
 const sessionConfig = {
+    store,
     name: 'session',
-    secret : 'secret101', 
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie : {
@@ -86,6 +97,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', {err});
 })
 
-app.listen(3000, (req, res) => {
-    console.log('Server started at port 3000');
+const port = process.env.PORT || 3000;
+app.listen(port, (req, res) => {
+    console.log(`Server started at port ${port}`);
 })
